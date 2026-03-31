@@ -15,6 +15,8 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import logging
+import multiprocessing as mp
 import os
 import sys
 
@@ -25,6 +27,23 @@ from docx.shared import Mm, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 from extractor import Element, extract_page, postprocess
+
+# Suppress pdfminer PDF metadata warnings
+logging.getLogger('pdfminer').setLevel(logging.CRITICAL)
+
+
+# ---------------------------------------------------------------------------
+# Parallel extraction worker (module-level for multiprocessing pickling)
+# ---------------------------------------------------------------------------
+
+def _extract_worker(args: tuple) -> tuple[int, list[Element], str | None]:
+    """Extract and postprocess a single page. Returns (page_num, elements, error)."""
+    pdf_path, page_num = args
+    try:
+        elements = postprocess(extract_page(pdf_path, page_num))
+        return (page_num, elements, None)
+    except Exception as exc:
+        return (page_num, [], str(exc))
 
 # ---------------------------------------------------------------------------
 # Style config (same as docx_generator.py)
@@ -120,6 +139,7 @@ def _add_page_separator(doc: Document, page_num: int) -> None:
     _add_paragraph(doc, f'─── Page {page_num} ───', 'page_marker')
 
 
+
 def generate(
     pdf_path: str,
     start: int,
@@ -130,9 +150,43 @@ def generate(
     include_types: set[str] | None = None,
     verbose: bool = True,
 ) -> None:
-    """Extract pages start..end (inclusive) and write to output_path."""
+    """Extract pages start..end (inclusive) and write to output_path using parallel extraction."""
     if include_types is None:
         include_types = ALL_TYPES
+
+    total = end - start + 1
+
+    # Parallel extraction phase
+    if verbose:
+        print(f"Extracting {total} pages in parallel...", flush=True)
+
+    page_range = list(range(start, end + 1))
+    worker_args = [(pdf_path, page_num) for page_num in page_range]
+
+    with mp.Pool() as pool:
+        # pool.imap preserves input order AND allows progress feedback
+        results = []
+        for idx, result in enumerate(pool.imap(_extract_worker, worker_args, chunksize=4), 1):
+            if verbose and idx % 50 == 0:
+                print(f"  Extracted {idx}/{total} pages")
+            results.append(result)
+
+    # Build results dict for easy lookup
+    page_data = {}
+    for page_num, elements, error in results:
+        if error and verbose:
+            print(f"Page {page_num}: ERROR: {error}")
+        page_data[page_num] = elements
+
+    # Rendering phase (single-threaded, in order)
+    if verbose:
+        print(f"Rendering {total} pages to docx...")
+
+    # Initialize log file
+    log_file = output_path.replace('.docx', '_progress.log')
+    if verbose:
+        with open(log_file, 'w') as f:
+            f.write(f"Rendering pages {start}-{end}\n")
 
     doc = Document()
 
@@ -147,23 +201,24 @@ def generate(
     section.top_margin = Mm(20)
     section.bottom_margin = Mm(20)
 
-    total = end - start + 1
-    for i, page_num in enumerate(range(start, end + 1)):
+    for i, page_num in enumerate(page_range):
         if verbose:
             print(f"  [{i+1}/{total}] Page {page_num}...", end=' ', flush=True)
 
-        try:
-            raw = extract_page(pdf_path, page_num)
-            elements = postprocess(raw)
-        except Exception as exc:
-            if verbose:
-                print(f"ERROR: {exc}")
-            continue
+        elements = page_data.get(page_num, [])
 
         if verbose:
             counts = {t: sum(1 for e in elements if e.text_type == t) for t in include_types}
             summary = ' '.join(f'{t}={n}' for t, n in counts.items() if n)
-            print(summary or '(empty)')
+            summary_str = summary or '(empty)'
+            print(summary_str)
+
+            # Log to file
+            try:
+                with open(log_file, 'a') as f:
+                    f.write(f"[{i+1}/{total}] Page {page_num}: {summary_str}\n")
+            except Exception:
+                pass  # Silently skip if can't write log
 
         if page_markers:
             _add_page_separator(doc, page_num)
