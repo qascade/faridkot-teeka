@@ -1,10 +1,47 @@
-# Fareedkot Teeka — SriAngad → Unicode Converter
+# Fareedkot Teeka 
 
-Converts the 4,300-page `Fareedkot_Teeka.pdf` from the legacy SriAngad font encoding to proper Unicode Gurmukhi, producing formatted `.docx` files for review.
+> ੴ ਵਾਹਿਗੁਰੂ ਜੀ ਕੀ ਫ਼ਤਹਿ॥
+> ਸ੍ਰੀ ਭਗੌਤੀ ਜੀ ਸਹਾਇ॥
 
-## Background
+Converts the 4,300-page `Fareedkot_Teeka.pdf` from the legacy SriAngad font encoding to proper Unicode Gurmukhi, producing formatted `.docx` files for review. As well as doing programatic transliteration of the Teeka to Devanagri for reach to wider audience. 
 
-The PDF uses **SriAngad** — a legacy pre-Unicode Gurmukhi font that maps Gurmukhi glyphs to Latin character codes (WinAnsiEncoding). It has no ToUnicode map, so copy-paste yields Latin gibberish. This tool reverse-engineers the complete encoding and converts the text.
+## About Fareedkot Teeka
+
+The **Faridkot Wala Teeka** is a classical exegesis of the Sri Guru Granth Sahib in Braj Bhasha composed by a team of scholars of the Nirmala Sect. It represents the first formal, systematic attempt to interpret Gurbani in this comprehensive manner, and it became the ideal prototype for all future Teeka scholarship in this field.
+
+### Historical Context
+
+Teekas (commentaries) on the Guru Granth Sahib have existed since the scripture's compilation, but the first formal Teeka aligned with traditional Sikh scriptural interpretation was written by **Sant Giani Badan Singh Ji** of Dera Sekhwan at the request and encouragement of **Maharaja Bikram Singh** of Faridkot. This monumental work took six and a half years to complete and was finished in **1883**.
+
+The Teeka was reviewed by a committee appointed by Mahant Shamer Singh of Patna. After incorporating their comments, the first edition was published (and funded) by **Maharaja Balvir Singh** of Faridkot in **1906**, printed by the **Wazir Hind Press** (established by Bhai Vir Singh) in Amritsar. A second edition was subsequently published by Maharaja Harinder Singh of Faridkot in **1928**. Due to the patronage of the Rulers of Faridkot State, it became known as the "**Faridkoti Teeka**."
+
+### Scholarly Legacy
+
+During the same period, **Pandit Tara Singh Narotam** — a contemporary of Giani Badan Singh — also began composing a Teeka, but passed away before completing it (finishing only up to Basant Rag). His incomplete draft was later lost when borrowed by others who never returned it. Only the Sri Rag section of his Teeka survives, possessed by very few researchers and scholars today.
+
+The Faridkoti Teeka became the foundational reference work for Gurbani scholarship and interpretation, influencing subsequent scholarly work in Sikh scriptural studies.
+
+### Why Digitization Matters
+
+For generations, this work has been accessed only in its original printed form — a rare and fragile manuscript available in limited copies. The digitization and modernization of this text is critical for:
+
+1. **Preservation** — Protect this irreplaceable scholarly work from deterioration and loss
+2. **Accessibility** — Make the Teeka available to Sikhs worldwide, especially younger generations and diaspora communities
+3. **Searchability** — Enable digital search, study, and reference capabilities for researchers and Kathakars (discourse leaders)
+4. **Multilingual Reach** — Provide Hindi/Devanagari versions for Hindi-speaking Sikhs and scholars who can benefit from this wisdom
+
+**Reference:** Gurmat Sahit Vivechan (Punjabi, published by Punjab Languages Department) — An authoritative compilation of 25 essays by leading scholars on the history of Gurmat literature, providing comprehensive context for understanding the Faridkoti Teeka within Sikh intellectual tradition.
+
+---
+
+## The Conversion Challenge
+
+The PDF uses **SriAngad** — a legacy pre-Unicode Gurmukhi font (from pre-2000) that maps Gurmukhi glyphs to Latin character codes (WinAnsiEncoding). It has no ToUnicode map, so:
+- Copy-paste from the PDF yields Latin gibberish (e.g., `manmuKh` instead of ਮਨਮੁਖ)
+- The text cannot be indexed, searched, or properly displayed on modern devices
+- Standard OCR and digitization tools fail completely
+
+This project **reverse-engineers the complete SriAngad encoding** and converts the text to proper Unicode, enabling the Teeka to be used with modern software and devices.
 
 See `ANALYSIS.md` for the full character mapping reference.
 
@@ -20,6 +57,12 @@ See `ANALYSIS.md` for the full character mapping reference.
 **A comprehensive manual proofreading process is planned** to verify and correct all text. This conversion is a first pass to enable digital distribution and review — it is NOT a final, verified edition.
 
 For questions about specific passages or suspected errors, please refer to the original PDF at the noted page number.
+
+**Found an error?** Please report it:
+- **Email:** sksingh2211@gmail.com (include page number and description of the error)
+- **GitHub:** Open an issue at https://github.com/qascade/faridkot-teeka/issues
+
+Your feedback helps improve the accuracy of the conversion for future readers.
 
 ---
 
