@@ -10,6 +10,19 @@ See `ANALYSIS.md` for the full character mapping reference.
 
 ---
 
+## ⚠️ Disclaimer
+
+**Generated files (`output/*.docx`) are programmatically converted from PDF and may contain:**
+- Spelling mistakes or clerical errors from the source document
+- Character mapping errors (rare, but possible edge cases)
+- Formatting inconsistencies where the PDF structure was ambiguous
+
+**A comprehensive manual proofreading process is planned** to verify and correct all text. This conversion is a first pass to enable digital distribution and review — it is NOT a final, verified edition.
+
+For questions about specific passages or suspected errors, please refer to the original PDF at the noted page number.
+
+---
+
 ## Setup
 
 ```bash
@@ -50,13 +63,30 @@ python3 src/generate.py -s 338 -e 347 -q
 
 Output goes to `output/pages_{start}-{end}.docx` by default.
 
+### Transliterate Gurmukhi to Devanagari
+
+Convert an existing Gurmukhi `.docx` file to Devanagari script (for Hindi-reading audiences):
+
+```bash
+python3 src/transliterate_docx.py input.docx [output.docx]
+```
+
+This auto-detects Gurmukhi text, transliterates to Devanagari Unicode, and changes the font to Devanagari MT. Language tag is updated from `pa-IN` to `hi-IN`.
+
+Example:
+```bash
+python3 src/transliterate_docx.py output/pages_338-347.docx
+# → Saves to: output/pages_338-347_devanagari.docx
+```
+
 ### Run tests
 
 ```bash
-python3 src/test_converter.py
+python3 src/test_converter.py        # 159 character mapping tests
+python3 src/test_transliterator.py   # 81 transliteration tests
 ```
 
-All 159 tests must pass before any changes to `src/converter.py`.
+All tests must pass before any changes to `src/converter.py` or `src/transliterator.py`.
 
 ---
 
@@ -68,7 +98,10 @@ All 159 tests must pass before any changes to `src/converter.py`.
 | `src/extractor.py` | Extracts text + color/font metadata from PDF using pdfminer |
 | `src/generate.py` | CLI — main entry point for generating `.docx` files |
 | `src/docx_generator.py` | Renders `Element` objects into a `.docx` |
+| `src/transliterator.py` | Gurmukhi Unicode → Devanagari Unicode transliteration engine |
+| `src/transliterate_docx.py` | CLI for batch Word document transliteration |
 | `src/test_converter.py` | 159 unit tests covering every character mapping |
+| `src/test_transliterator.py` | 81 unit tests for transliteration (all passing) |
 | `requirements.txt` | Python dependencies |
 | `docs/ANALYSIS.md` | Complete SriAngad → Unicode character mapping reference |
 | `docs/doc_generation_instructions.md` | Page structure rules + known common errors |
