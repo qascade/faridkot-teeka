@@ -6,12 +6,12 @@ import re
 
 # ---------------------------------------------------------------------------
 # Step 1 preprocessing: addak before nukta-consonants
-# ੱ + C + ਼ → C + ਼ + ੍ + C + ਼  (double the full nukta-consonant)
+# ੱ + C + ਼ → just C + ਼  (remove addak, keep nukta-consonant as single)
 # ---------------------------------------------------------------------------
 _ADDAK_NUKTA = [
-    ('\u0A71\u0A38\u0A3C', '\u0A38\u0A3C\u0A4D\u0A38\u0A3C'),  # ੱਸ਼ → ਸ਼੍ਸ਼
-    ('\u0A71\u0A1C\u0A3C', '\u0A1C\u0A3C\u0A4D\u0A1C\u0A3C'),  # ੱਜ਼ → ਜ਼੍ਜ਼
-    ('\u0A71\u0A17\u0A3C', '\u0A17\u0A3C\u0A4D\u0A17\u0A3C'),  # ੱਗ਼ → ਗ਼੍ਗ਼
+    ('\u0A71\u0A38\u0A3C', '\u0A38\u0A3C'),          # ੱਸ਼ → ਸ਼
+    ('\u0A71\u0A1C\u0A3C', '\u0A1C\u0A3C'),          # ੱਜ਼ → ਜ਼
+    ('\u0A71\u0A17\u0A3C', '\u0A17\u0A3C'),          # ੱਗ਼ → ਗ਼
 ]
 
 # ---------------------------------------------------------------------------

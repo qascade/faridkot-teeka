@@ -181,8 +181,8 @@ class TestPreprocessing(unittest.TestCase):
         self.assertEqual(transliterate('ਉੱਤਰ'), 'उत्तर')
 
     def test_addak_before_sha(self):
-        # ੱਸ਼ = addak + (sa+nukta) → (sa+nukta) + virama + (sa+nukta) → श्श
-        self.assertEqual(transliterate('\u0A71\u0A38\u0A3C'), 'श्श')
+        # ੱਸ਼ = addak + (sa+nukta) → just (sa+nukta) → श
+        self.assertEqual(transliterate('\u0A71\u0A38\u0A3C'), 'श')
 
     def test_sha_two_codepoints(self):
         self.assertEqual(transliterate('ਸ਼'), 'श')
