@@ -90,8 +90,6 @@ CHAR_MAP: dict[str, str] = {
 }
 
 # Visual artifacts: stripped before processing — no Gurmukhi meaning.
-_ARTIFACTS: frozenset[str] = frozenset('\xe6')  # æ (230)
-
 # Characters that can be a base consonant after sihari 'i'
 _BASE_CONSONANTS: frozenset[str] = frozenset(
     'kKgGcCjJtTfFdDqQnNpPbBmrlvVhsXSZ'
@@ -177,22 +175,15 @@ def _process_char(text: str, pos: int) -> tuple[str, int]:
 
 def convert(text: str) -> str:
     """Convert a SriAngad-encoded string to Unicode Gurmukhi."""
-    text = ''.join(ch for ch in text if ch not in _ARTIFACTS)
     result: list[str] = []
     pos = 0
     while pos < len(text):
         chunk, consumed = _process_char(text, pos)
         result.append(chunk)
         pos += consumed
-    # Collapse runs of 2+ spaces introduced by PDF extraction (preserve single spaces)
     output = ''.join(result)
-    while '  ' in output:
-        output = output.replace('  ', ' ')
-    # ੴ (Ik Onkar) has no encoded space after it in SriAngad PDFs — insert one
-    # Only when followed immediately by a non-space character.
-    output = re.sub('\u0A74(?=[^ ])', '\u0A74 ', output)
     # Fix matra ordering: nasalization marks (ੰ ਂ) must come AFTER vowel matras (ੁ ੂ)
-    # SriAngad sometimes encodes tippi/bindi before dulainkar/aunkar — swap them back.
+    # SriAngad typists wrote in visual top-to-bottom order; Unicode requires vowel first.
     for nasal in ('\u0A70', '\u0A02'):       # ੰ tippi, ਂ bindi
         for vowel in ('\u0A42', '\u0A41'):   # ੂ dulainkar, ੁ aunkar
             output = output.replace(nasal + vowel, vowel + nasal)

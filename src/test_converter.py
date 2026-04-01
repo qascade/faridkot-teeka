@@ -10,6 +10,7 @@ Organised into 4 groups:
 
 import unittest
 from converter import convert
+from extractor import normalize_pdf_text
 
 
 class TestIndividualChars(unittest.TestCase):
@@ -94,7 +95,7 @@ class TestIndividualChars(unittest.TestCase):
     def test_U_acute_visarga(self):       self.assertEqual(convert('Ú'), '\u0A03')    # ਃ
 
     # --- Null characters ---
-    def test_ae_artifact_null(self):    self.assertEqual(convert('æ'), '')
+    def test_ae_artifact_null(self):    self.assertEqual(convert(normalize_pdf_text('æ')), '')
     def test_O_stroke_alone_null(self): self.assertEqual(convert('Ø'), '')  # Ø alone → no output
 
     # --- Pass-through (digits, spaces, punctuation) ---
@@ -395,7 +396,7 @@ class TestWordLevel(unittest.TestCase):
 
     def test_CUaet(self):
         # æ=null stripped, C=ਛ, U=ੂ, t=ਟ
-        self.assertEqual(convert('CUæt'), 'ਛੂਟ')
+        self.assertEqual(convert(normalize_pdf_text('CUæt')), 'ਛੂਟ')
 
     def test_EaMkwru(self):
         # E=ਓ standalone long-O vowel

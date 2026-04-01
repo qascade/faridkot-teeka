@@ -29,7 +29,20 @@ class Element:
     text_type: str      # see classify() below
     font_size: float
     page_num: int       # 1-based
-    footnote_color: str | None = None  # Color override for text after footnote number
+
+
+def normalize_pdf_text(text: str) -> str:
+    """Clean PDF extraction artifacts from raw SriAngad text before conversion.
+
+    Handles quirks introduced by the PDF layout engine and authoring tool,
+    not the SriAngad encoding itself.
+    """
+    text = text.replace('\xe6', '')  # æ has no Gurmukhi equivalent
+
+    while '  ' in text:
+        text = text.replace('  ', ' ')
+
+    return text
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +178,7 @@ def extract_page(pdf_path: str, page_num: int) -> list[Element]:
                 )
 
                 text_type = classify(font_name, size, color)
-                unicode_text = convert(raw) if _is_sriangad(font_name) else raw
+                unicode_text = convert(normalize_pdf_text(raw)) if _is_sriangad(font_name) else raw
 
                 # Merge with previous line in this box if same type AND same font size
                 prev_same = (

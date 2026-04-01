@@ -3,7 +3,7 @@
 > ੴ ਵਾਹਿਗੁਰੂ ਜੀ ਕੀ ਫ਼ਤਹਿ॥
 > ਸ੍ਰੀ ਭਗੌਤੀ ਜੀ ਸਹਾਇ॥
 
-Converts the 4,300-page `Fareedkot_Teeka.pdf` from the legacy SriAngad font encoding to proper Unicode Gurmukhi, producing formatted `.docx` files for review. As well as doing programatic transliteration of the Teeka to Devanagri for reach to wider audience. 
+Converts the 4,300-page `Fareedkot_Teeka.pdf` from the legacy SriAngad font encoding to proper Unicode Gurmukhi, producing formatted `.docx` files for review. Also provides programmatic transliteration of the Teeka to Devanagari for reach to wider audiences. 
 
 ## About Fareedkot Teeka
 
@@ -58,7 +58,7 @@ pip install -r requirements.txt
 
 **Requirements:** `pdfminer.six`, `python-docx`
 
-**Font:** Uses `Gurmukhi MN` (macOS system font). On other systems, edit `_GURMUKHI_FONT` in `src/generate.py`.
+**Font:** Uses `Noto Sans Gurmukhi` (cross-platform). On other systems, edit `_GURMUKHI_FONT` in `src/generate.py`.
 
 ---
 
@@ -98,7 +98,7 @@ Convert an existing Gurmukhi `.docx` file to Devanagari script (for Hindi-readin
 python3 src/transliterate_docx.py input.docx [output.docx]
 ```
 
-This auto-detects Gurmukhi text, transliterates to Devanagari Unicode, and changes the font to Devanagari MT. Language tag is updated from `pa-IN` to `hi-IN`.
+This auto-detects Gurmukhi text, transliterates to Devanagari Unicode, and changes the font to Noto Serif Devanagari. Language tag is updated from `pa-IN` to `hi-IN`.
 
 Example:
 ```bash
@@ -121,8 +121,8 @@ All tests must pass before any changes to `src/converter.py` or `src/translitera
 
 | File | Purpose |
 |------|---------|
-| `src/converter.py` | Core SriAngad → Unicode conversion logic |
-| `src/extractor.py` | Extracts text + color/font metadata from PDF using pdfminer |
+| `src/converter.py` | Pure SriAngad → Unicode conversion (no PDF assumptions). Can be used as a standalone API. |
+| `src/extractor.py` | Extracts text + color/font metadata from PDF using pdfminer. Cleans PDF artifacts via `normalize_pdf_text()` before conversion. |
 | `src/generate.py` | CLI — main entry point for generating `.docx` files |
 | `src/docx_generator.py` | Renders `Element` objects into a `.docx` |
 | `src/transliterator.py` | Gurmukhi Unicode → Devanagari Unicode transliteration engine |
@@ -161,8 +161,22 @@ Text is classified by color (from PDF graphicstate) and font size:
 
 ---
 
-## Known Issues / Manual Fixes Needed
+## Architecture
 
-- Shabad header lines (ੴ, ਸਿਰੀਰਾਗੁ, ਘਰਿ marker, first tuk) come from a single PDF text box and merge into one paragraph — split manually
+**Separation of Concerns:**
+- **`converter.py`** — Pure SriAngad → Unicode mapping. No PDF-specific logic. Can be used as a standalone API.
+- **`extractor.py`** — PDF extraction + artifact cleanup via `normalize_pdf_text()` → passes clean text to `convert()`.
+
+This design lets users leverage `converter.py` directly for their own SriAngad sources without PDF assumptions.
+
+**Data flow:**
+```
+PDF text → normalize_pdf_text() → convert() → Unicode Gurmukhi
+```
+
+---
+
+## Known Issues
+
 - Page markers (`─── Page N ───`) are included for reference; remove after verification
-- `ਅਗ੍ਯਾਨ` vs `ਅਯਾਨ` — some words have variant spellings across pages; verify against original
+- **Hindi/Devanagari versions** — The transliteration is direct character-by-character conversion, not semantic translation. This produces valid Devanagari text but with non-standard Hindi spelling/grammar in many places. We are exploring semantic rules to reduce these errors. Hindi readers should refer to the Gurmukhi original or a proper Hindi translation for correct interpretation.
