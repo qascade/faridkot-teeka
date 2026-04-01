@@ -52,11 +52,31 @@ Your feedback helps improve the accuracy of the conversion for future readers.
 
 ## Setup
 
+### 1. Create and activate virtual environment
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate it
+source venv/bin/activate  # On macOS/Linux
+# or
+venv\Scripts\activate     # On Windows
+```
+
+### 2. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 **Requirements:** `pdfminer.six`, `python-docx`
+
+### 3. Deactivate when done
+
+```bash
+deactivate
+```
 
 **Font:** Uses `Noto Sans Gurmukhi` (cross-platform). On other systems, edit `_GURMUKHI_FONT` in `src/generate.py`.
 
