@@ -6,8 +6,10 @@ Organised into 4 groups:
   Group 2: Sihari (ਿ) reordering algorithm (critical)
   Group 3: Word-level tests from sample_mappings.md (ground truth)
   Group 4: Full-line integration tests
+  Group 5: Ik Onkar (ੴ) spacing fix
 """
 
+import re
 import unittest
 from converter import convert
 from extractor import normalize_pdf_text
@@ -463,6 +465,67 @@ class TestFullLines(unittest.TestCase):
 
     def test_bindi_before_dulainkar_fixed(self):
         self.assertEqual(convert('hxU'), 'ਹੂਂ')
+
+
+class TestIkOnkarSpacing(unittest.TestCase):
+    """Group 5 — Ik Onkar (ੴ) spacing fix.
+
+    In SriAngad PDFs, ੴ (U+0A74, Ik Onkar) is typeset with no space after it.
+    The fix inserts a space when ੴ is immediately followed by a non-space char.
+    """
+
+    def _apply_ik_onkar_fix(self, text: str) -> str:
+        """Simulate the regex applied in extractor.py after conversion."""
+        return re.sub('\u0A74(?=[^ ])', '\u0A74 ', text)
+
+    def test_ik_onkar_jammed_to_consonant(self):
+        """ੴ jammed against any consonant should get a space."""
+        text = 'ੴਸਤ'  # ੴ jammed to ਸ
+        fixed_text = self._apply_ik_onkar_fix(text)
+        self.assertEqual(fixed_text, 'ੴ ਸਤ')
+
+    def test_ik_onkar_already_has_space(self):
+        """ੴ already followed by space should not get doubled space."""
+        # If there's already a space, don't insert another
+        text = 'ੴ ਸਤ'
+        fixed_text = self._apply_ik_onkar_fix(text)
+        self.assertEqual(fixed_text, 'ੴ ਸਤ')
+
+    def test_ik_onkar_at_end(self):
+        """ੴ at end of string should not get space (nothing follows)."""
+        text = 'ਤ ੴ'
+        fixed_text = self._apply_ik_onkar_fix(text)
+        self.assertEqual(fixed_text, 'ਤ ੴ')
+
+    def test_ik_onkar_jammed_to_matra(self):
+        """ੴ jammed against a vowel matra should get a space."""
+        text = 'ੴਾ'  # ੴ jammed to aa-matra
+        fixed_text = self._apply_ik_onkar_fix(text)
+        self.assertEqual(fixed_text, 'ੴ ਾ')
+
+    def test_ik_onkar_multiple_instances(self):
+        """Multiple ੴ instances in one string should all get fixed."""
+        # This is unusual but tests robustness
+        text = 'ੴਸਤੀ ੴਨਾਮ'
+        fixed_text = self._apply_ik_onkar_fix(text)
+        self.assertEqual(fixed_text, 'ੴ ਸਤੀ ੴ ਨਾਮ')
+
+    def test_ik_onkar_with_danda(self):
+        """ੴ followed by danda (।) should get a space."""
+        text = 'ੴ।'
+        fixed_text = self._apply_ik_onkar_fix(text)
+        # danda is a non-space char, so space should be inserted
+        self.assertEqual(fixed_text, 'ੴ ।')
+
+    def test_ik_onkar_conversion_from_sriangad(self):
+        """Full test: SriAngad byte \\xa1 converts to ੴ, then gets spacing fix."""
+        # \xa1 is the SriAngad byte for ੴ
+        unicode_text = convert(normalize_pdf_text('\xa1'))
+        self.assertEqual(unicode_text, 'ੴ')
+        # Now test with a consonant jammed after it
+        unicode_text_jammed = 'ੴਸ'  # Simulating what PDF extraction produces
+        fixed_text = self._apply_ik_onkar_fix(unicode_text_jammed)
+        self.assertEqual(fixed_text, 'ੴ ਸ')
 
 
 if __name__ == '__main__':

@@ -14,6 +14,7 @@ Color legend (ICCBased RGB, confirmed from PDF probe):
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from pdfminer.high_level import extract_pages
@@ -179,6 +180,10 @@ def extract_page(pdf_path: str, page_num: int) -> list[Element]:
 
                 text_type = classify(font_name, size, color)
                 unicode_text = convert(normalize_pdf_text(raw)) if _is_sriangad(font_name) else raw
+
+                # Fix ੴ (Ik Onkar) spacing: it has no encoded space after it in SriAngad PDFs
+                if _is_sriangad(font_name):
+                    unicode_text = re.sub('\u0A74(?=[^ ])', '\u0A74 ', unicode_text)
 
                 # Merge with previous line in this box if same type AND same font size
                 prev_same = (
