@@ -27,6 +27,7 @@ from docx.shared import Mm, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 from extractor import Element, extract_page, postprocess
+from version import __version__
 
 # Suppress pdfminer PDF metadata warnings
 logging.getLogger('pdfminer').setLevel(logging.CRITICAL)
@@ -291,8 +292,12 @@ def generate(
             run._r.append(br)
 
     os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
+
+    # Add version metadata to docx properties
+    doc.core_properties.comments = f"Fareedkot Teeka converter v{__version__}"
+
     doc.save(output_path)
-    print(f"\nWritten: {output_path}")
+    print(f"\nWritten: {output_path} (v{__version__})")
 
 
 # ---------------------------------------------------------------------------
