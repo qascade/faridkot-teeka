@@ -79,3 +79,4 @@ Here's sample gurumukhi text from page 338
 
 - ਬੰੂਦ should be ਬੂੰਦ
 - ਹੰੂ should be ਹੂੰ
+- ਦੁੱੱਖੋਂ ਕ੍ਯਿੋਂਕਿ

@@ -71,7 +71,7 @@ With the complete mapping table below, extracted text can be post-processed into
 | `C` | U+0A1B | ਛ | Chha | `B` | U+0A2D | ਭ | Bha |
 | `j` | U+0A1C | ਜ | Ja | `m` | U+0A2E | ਮ | Ma |
 | `J` | U+0A1D | ਝ | Jha | `r` | U+0A30 | ਰ | Ra |
-| `t` | U+0A1F | ਟ | Tta | `l` | U+0A32 | ਲ | La |
+| `t` | U+0A1F | ਟ | Tainka | `l` | U+0A32 | ਲ | La |
 | `T` | U+0A20 | ਠ | Ttha | `v` | U+0A35 | ਵ | Va |
 | `f` | U+0A21 | ਡ | Dda | `V` | U+0A5C | ੜ | Rra |
 | `d` | U+0A26 | ਦ | Da | `h` | U+0A39 | ਹ | Ha |
@@ -88,7 +88,7 @@ With the complete mapping table below, extracted text can be post-processed into
 |----------|---------|----------|-------|
 | `R` | U+0A4D+U+0A30 | ੍ਰ | Subscript Ra |
 | `H` | U+0A4D+U+0A39 | ੍ਹ | Subscript Ha — `ijnHW`→ਜਿਨ੍ਹਾਂ, `qrHW`→ਤਰ੍ਹਾਂ |
-| `Ã` | U+0A4D+U+0A1F | ੍ਟ | Subscript Tta — `aiDsÃwn`→ਅਧਿਸ੍ਟਾਨ |
+| `Ã` | U+0A4D+U+0A1F | ੍ਟ | Subscript Tainka — `aiDsÃwn`→ਅਧਿਸ੍ਟਾਨ |
 | `Í` | U+0A4D+U+0A35 | ੍ਵ | Subscript Va — `sÍwmI`→ਸ੍ਵਾਮੀ, `eIsÍr`→ਈਸ੍ਵਰ |
 | `Î` | U+0A4D+U+0A2F | ੍ਯ | Subscript Ya — `awgÎw`→ਆਗ੍ਯਾ, `XogÎ`→ਯੋਗ੍ਯ |
 | `Ä` | U+0A4D | ੍ | Trailing virama — `TginÄ`→ਠਗਿਨ੍ |
@@ -168,4 +168,4 @@ Confirmed character mappings from corpus investigation:
 - `ù` → ਙ Nga (rare): `isMiùaw`→ਸਿੰਙਿਆ, `ùaw`→ਙਆ (pages 341+)
 - `ø` → ਞ Nya (rare): `suMøI`→ਸੁੰਞੀ (page 86), `vMøw`→ਵੰਞਾ (page 103)
 - `æ` → stripped (visual artifact, no Gurmukhi meaning): `CUæt`→ਛੂਟ, `kuætl`
-- `Ã` → ੍ਟ subscript Tta: appears as subscript at foot of consonant, like ੍ਹ in ਜਿਨ੍ਹਾਂ
+- `Ã` → ੍ਟ subscript Tainka: appears as subscript at foot of consonant, like ੍ਹ in ਜਿਨ੍ਹਾਂ

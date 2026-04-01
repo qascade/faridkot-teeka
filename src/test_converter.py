@@ -382,7 +382,7 @@ class TestWordLevel(unittest.TestCase):
         self.assertEqual(convert('ßYr'), 'ਗ਼ੈਰ')
 
     def test_aiDsAn(self):
-        # Ã=੍ਟ subscript Tta
+        # Ã=੍ਟ subscript Tainka
         self.assertEqual(convert('aiDsÃwn'), 'ਅਧਿਸ੍ਟਾਨ')
 
     def test_anûdu(self):

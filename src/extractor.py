@@ -14,6 +14,7 @@ Color legend (ICCBased RGB, confirmed from PDF probe):
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from pdfminer.high_level import extract_pages
@@ -85,6 +86,21 @@ def classify(font_name: str, size: float, color: str) -> str:
 # ---------------------------------------------------------------------------
 # Extraction
 # ---------------------------------------------------------------------------
+
+def _extract_footnote_number(text: str) -> tuple[str | None, str]:
+    """Extract leading footnote number from text.
+
+    Returns (footnote_number_or_None, remaining_text).
+    Examples:
+      "1 some text" → ("1", "some text")
+      "123 text" → ("123", "text")
+      "no number here" → (None, "no number here")
+    """
+    match = re.match(r'^(\d+)\s+(.*)$', text.strip())
+    if match:
+        return match.group(1), match.group(2)
+    return None, text
+
 
 def _dominant_color(line: LTTextLine) -> tuple[str, object, float]:
     """Return (color_label, ncs, size) from the first LTChar in the line."""
@@ -163,8 +179,30 @@ def extract_page(pdf_path: str, page_num: int) -> list[Element]:
                     ''
                 )
 
+                # Check if this line starts with a footnote number
+                footnote_num, rest_text = _extract_footnote_number(raw)
+
+                # Process footnote number (if present) as a separate element
+                if footnote_num:
+                    # Footnote numbers are always annotation (gray), regardless of size
+                    fn_unicode = footnote_num  # numbers don't need conversion
+                    box_elements.append(Element(
+                        raw_text=footnote_num,
+                        unicode_text=fn_unicode,
+                        text_type='annotation',
+                        font_size=size,
+                        page_num=page_num,
+                    ))
+                    # Continue with the rest of the text
+                    raw = rest_text
+
+                # Classify and process the remaining text (or full line if no footnote number)
                 text_type = classify(font_name, size, color)
                 unicode_text = convert(raw) if _is_sriangad(font_name) else raw
+
+                if not raw.strip():
+                    # Just a footnote number, already added
+                    continue
 
                 # Merge with previous line in this box if same type AND same font size
                 prev_same = (

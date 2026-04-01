@@ -69,7 +69,7 @@ CHAR_MAP: dict[str, str] = {
     # --- Subscript / cluster forms ---
     'R': '\u0A4D\u0A30',        # ੍ਰ  subscript Ra
     'H': '\u0A4D\u0A39',        # ੍ਹ  subscript Ha
-    '\xc3': '\u0A4D\u0A1F',     # Ã (195) subscript Tta
+    '\xc3': '\u0A4D\u0A1F',     # Ã (195) subscript Tainka
     '\xcd': '\u0A4D\u0A35',     # Í (205) subscript Va
     '\xce': '\u0A4D\u0A2F',     # Î (206) subscript Ya
     '\xc4': '\u0A4D',           # Ä (196) trailing virama
