@@ -100,6 +100,8 @@ def docx_break_type():
 
 
 def _add_paragraph(doc: Document, text: str, text_type: str) -> None:
+    import re
+
     color = _COLORS.get(text_type, _COLORS['braj'])
     size = _FONT_SIZES.get(text_type, 12)
     align = _ALIGNMENTS.get(text_type, WD_ALIGN_PARAGRAPH.LEFT)
@@ -110,6 +112,10 @@ def _add_paragraph(doc: Document, text: str, text_type: str) -> None:
     para.paragraph_format.space_after = Pt(2)
     if text_type == 'gurbani':
         para.paragraph_format.space_before = Pt(4)
+
+    # Special case: annotation that is just a footnote number → render in black
+    if text_type == 'annotation' and text.strip().isdigit():
+        color = RGBColor(0x00, 0x00, 0x00)  # Black for footnote numbers
 
     run = para.add_run(text)
     run.font.name = font_name
@@ -223,7 +229,47 @@ def generate(
         if page_markers:
             _add_page_separator(doc, page_num)
 
-        for el in elements:
+        # Preprocess: merge annotation text (after number) with following braj_sub
+        processed_elements = []
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+
+            # Check if annotation starts with a footnote number
+            if el.text_type == 'annotation' and i + 1 < len(elements):
+                import re
+                match = re.match(r'^(\d+)\s+(.*)$', el.unicode_text)
+                next_el = elements[i + 1]
+
+                if match and next_el.text_type == 'braj_sub':
+                    footnote_num = match.group(1)
+                    annotation_text = match.group(2)
+
+                    # Add just the number as annotation
+                    processed_elements.append(Element(
+                        raw_text=el.raw_text,
+                        unicode_text=footnote_num,
+                        text_type='annotation',
+                        font_size=el.font_size,
+                        page_num=el.page_num,
+                    ))
+
+                    # Merge annotation text with braj_sub
+                    merged_text = annotation_text + ' ' + next_el.unicode_text
+                    processed_elements.append(Element(
+                        raw_text=el.raw_text + ' ' + next_el.raw_text,
+                        unicode_text=merged_text,
+                        text_type='braj_sub',
+                        font_size=next_el.font_size,
+                        page_num=next_el.page_num,
+                    ))
+                    i += 2  # Skip both elements
+                    continue
+
+            processed_elements.append(el)
+            i += 1
+
+        for el in processed_elements:
             if el.text_type not in include_types:
                 continue
             # Skip the latin page number element (just digits) — page_marker covers it
