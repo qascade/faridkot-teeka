@@ -201,10 +201,43 @@ python3 src/transliterate_docx.py output/pages_338-347.docx
 # → Saves to: output/pages_338-347_devanagari.docx
 ```
 
+### Correct Devanagari spelling (AI-assisted)
+
+The `braj_correction_agent/` folder contains a LangGraph + Gemini pipeline that incrementally
+fixes spelling errors in the Devanagari DOCX. It processes the Braj commentary paragraphs in
+batches, pausing after each one for human review before writing any changes. Progress is saved
+to a SQLite checkpoint so runs can be stopped and resumed freely.
+
+```bash
+pip install -r braj_correction_agent/requirements.txt
+
+# Add your Gemini API key to braj_correction_agent/.env, then:
+python braj_correction_agent/main.py \
+  --input "Finished Docs/fareedkot_teeka_devanagari_0_1_0.docx"
+```
+
+See [`braj_correction_agent/README.md`](braj_correction_agent/README.md) for full usage.
+
+### Gurbani accuracy test
+
+Compare every Gurbani line in a generated docx against the authoritative Unicode GGS from [GurbaniDB](https://sikher.com/projects/gurbanidb/):
+
+```bash
+# One-time: download all 1430 GGS pages as reference (~15 seconds)
+python3 gurbani_accuracy_test/download_ggs_reference.py
+
+# Run accuracy test
+python3 gurbani_accuracy_test/test_gurbani_accuracy.py "Finished Docs/fareedkot_teeka_0_1_0.docx"
+```
+
+Results are saved as JSON + markdown report in `gurbani_accuracy_test/data/`. See [`docs/gurbani_accuracy_report.md`](docs/gurbani_accuracy_report.md) for the latest report.
+
+**Current accuracy: 98.9%** across 60,726 tuks tested (v0.1.2).
+
 ### Run tests
 
 ```bash
-python3 src/test_converter.py        # 159 character mapping tests
+python3 src/test_converter.py        # 171 character mapping tests
 python3 src/test_transliterator.py   # 81 transliteration tests
 ```
 
@@ -222,7 +255,8 @@ All tests must pass before any changes to `src/converter.py` or `src/translitera
 | `src/docx_generator.py` | Renders `Element` objects into a `.docx` |
 | `src/transliterator.py` | Gurmukhi Unicode → Devanagari Unicode transliteration engine |
 | `src/transliterate_docx.py` | CLI for batch Word document transliteration |
-| `src/test_converter.py` | 159 unit tests covering every character mapping |
+| `gurbani_accuracy_test/` | Accuracy test framework — compares docx gurbani against GurbaniDB reference |
+| `src/test_converter.py` | 171 unit tests covering every character mapping |
 | `src/test_transliterator.py` | 81 unit tests for transliteration (all passing) |
 | `requirements.txt` | Python dependencies |
 | `docs/ANALYSIS.md` | Complete SriAngad → Unicode character mapping reference |
@@ -252,7 +286,7 @@ Text is classified by color (from PDF graphicstate) and font size:
 1. **Sihari reordering** — `i` is coded BEFORE its consonant in SriAngad; must be placed AFTER in Unicode. With subscript clusters: `i` + base + subscript → base + subscript + ਿ
 2. **Carrier + matra look-ahead** — `a`/`e`/`A` followed by a matra produce precomposed independent vowels (e.g. `aw`→ਆ, `ey`→ਏ, `Au`→ਉ)
 3. **Ø+z sequence** — together produce ੱ (addak); Ø alone has no output
-4. **Matra ordering** — tippi/bindi typed before dulainkar/aunkar in source are swapped to correct Unicode order
+4. **Matra ordering** — tippi/bindi typed before dulainkar/aunkar, and aunkar typed before hora/kanaura, are swapped to correct Unicode order
 
 ---
 
@@ -274,10 +308,7 @@ PDF text → normalize_pdf_text() → convert() → Unicode Gurmukhi
 ## Known Issues
 
 - Page markers (`─── Page N ───`) are included for reference; remove after verification
-- **Hindi/Devanagari versions** — The transliteration is direct character-by-character conversion, not semantic translation. This produces valid Devanagari text but with non-standard Hindi spelling/grammar in many places. We are exploring semantic rules to reduce these errors. Hindi readers should refer to the Gurmukhi original or a proper Hindi translation for correct interpretation.
+- **Hindi/Devanagari versions** — The transliteration is direct character-by-character conversion, not semantic translation. This produces valid Devanagari text but with non-standard spellings in some places (matra ordering, anusvara, nukta artifacts). The `braj_correction_agent/` pipeline is being used to fix these incrementally with human review.
+- **Subscript Ha (੍ਹ)** — ~113 instances where the subscript Ha may be lost during PDF extraction. Under investigation.
 
-
-
-
-IIT Delhi, Madras, Kanpur, Kharagpur, Bombay, Guwahati, Roorkee, Optional Hyderabad. 
 (8.0, )
