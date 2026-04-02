@@ -478,6 +478,15 @@ class TestFullLines(unittest.TestCase):
     def test_bindi_before_dulainkar_fixed(self):
         self.assertEqual(convert('hxU'), 'ਹੂਂ')
 
+    def test_aunkar_before_hora_fixed(self):
+        """Aunkar typed before hora must swap to hora+aunkar."""
+        # gu + o → go + u  (ਗੁੋ → ਗੋੁ)
+        self.assertEqual(convert('guopwl'), 'ਗੋੁਪਾਲ')
+
+    def test_aunkar_before_kanaura_fixed(self):
+        """Aunkar typed before kanaura must swap to kanaura+aunkar."""
+        self.assertEqual(convert('suO'), 'ਸੌੁ')
+
 
 class TestIkOnkarSpacing(unittest.TestCase):
     """Group 5 — Ik Onkar (ੴ) spacing fix.

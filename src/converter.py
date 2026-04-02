@@ -188,4 +188,9 @@ def convert(text: str) -> str:
     for nasal in ('\u0A70', '\u0A02'):       # ੰ tippi, ਂ bindi
         for vowel in ('\u0A42', '\u0A41'):   # ੂ dulainkar, ੁ aunkar
             output = output.replace(nasal + vowel, vowel + nasal)
+    # Fix matra ordering: aunkar (ੁ) typed before hora (ੋ) or kanaura (ੌ)
+    # must be swapped — hora/kanaura attach at top, aunkar below.
+    for lower in ('\u0A41',):                # ੁ aunkar
+        for upper in ('\u0A4B', '\u0A4C'):   # ੋ hora, ੌ kanaura
+            output = output.replace(lower + upper, upper + lower)
     return output
