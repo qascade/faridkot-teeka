@@ -275,3 +275,9 @@ PDF text → normalize_pdf_text() → convert() → Unicode Gurmukhi
 
 - Page markers (`─── Page N ───`) are included for reference; remove after verification
 - **Hindi/Devanagari versions** — The transliteration is direct character-by-character conversion, not semantic translation. This produces valid Devanagari text but with non-standard Hindi spelling/grammar in many places. We are exploring semantic rules to reduce these errors. Hindi readers should refer to the Gurmukhi original or a proper Hindi translation for correct interpretation.
+
+
+
+
+IIT Delhi, Madras, Kanpur, Kharagpur, Bombay, Guwahati, Roorkee, Optional Hyderabad. 
+(8.0, )

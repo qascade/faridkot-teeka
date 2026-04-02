@@ -154,7 +154,7 @@ python3 gurbani_accuracy_test/test_gurbani_accuracy.py fareedkot_teeka_final.doc
 ---
 
 ## Critical files
-- `src/extractor.py` — add ੴ spacing fix inline after `convert()` call (~line 181)
+
 - `gurbani_accuracy_test/download_ggs_reference.py` — new: one-time GGS downloader
 - `gurbani_accuracy_test/test_gurbani_accuracy.py` — new: accuracy test CLI
 - `gurbani_accuracy_test/data/` — cached reference + results JSONs; add `gurbani_accuracy_test/data/*.json` to `.gitignore`
@@ -164,8 +164,6 @@ No new pip packages needed — `difflib`, `concurrent.futures`, `urllib.request`
 
 ## Verification
 ```bash
-# Fix ੴ bug first
-python3 src/test_converter.py   # all 159 tests still pass
 
 # Download GGS reference (one-time, ~15 seconds)
 python3 gurbani_accuracy_test/download_ggs_reference.py

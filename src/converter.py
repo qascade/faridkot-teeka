@@ -70,6 +70,7 @@ CHAR_MAP: dict[str, str] = {
     'R': '\u0A4D\u0A30',        # ੍ਰ  subscript Ra
     'H': '\u0A4D\u0A39',        # ੍ਹ  subscript Ha
     '\xc3': '\u0A4D\u0A1F',     # Ã (195) subscript Tainka
+    '\xc5': '\u0A4D\u0A2F',     # Å (197) subscript Ya (variant encoding)
     '\xcd': '\u0A4D\u0A35',     # Í (205) subscript Va
     '\xce': '\u0A4D\u0A2F',     # Î (206) subscript Ya
     '\xc4': '\u0A4D',           # Ä (196) trailing virama
@@ -97,7 +98,7 @@ _BASE_CONSONANTS: frozenset[str] = frozenset(
 )
 
 # Subscript forms that can follow a base consonant in a cluster
-_SUBSCRIPT_FORMS: frozenset[str] = frozenset('RH\xc3\xcd\xce')  # R H Ã Í Î
+_SUBSCRIPT_FORMS: frozenset[str] = frozenset('RH\xc3\xc5\xcd\xce')  # R H Ã Å Í Î
 
 # Mukta (a) + following matra → precomposed independent vowel
 _MUKTA_MATRA: dict[str, str] = {

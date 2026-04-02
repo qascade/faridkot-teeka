@@ -388,6 +388,18 @@ class TestWordLevel(unittest.TestCase):
         # Ã=੍ਟ subscript Tainka
         self.assertEqual(convert('aiDsÃwn'), 'ਅਧਿਸ੍ਟਾਨ')
 
+    def test_klÅ_subscript_ya(self):
+        # Å=੍ਯ subscript Ya (variant encoding)
+        self.assertEqual(convert('kl\xc5'), 'ਕਲ੍ਯ')
+
+    def test_rKÅw_subscript_ya_with_matra(self):
+        # Å=੍ਯ followed by aa-matra
+        self.assertEqual(convert('rK\xc5w'), 'ਰਖ੍ਯਾ')
+
+    def test_gÅwn_subscript_ya_gyan(self):
+        # Å=੍ਯ in ਗ੍ਯਾਨ (gyan)
+        self.assertEqual(convert('g\xc5wn'), 'ਗ੍ਯਾਨ')
+
     def test_anûdu(self):
         # û=ੰ tippi variant
         self.assertEqual(convert('anûdu'), 'ਅਨੰਦੁ')
