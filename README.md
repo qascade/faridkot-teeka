@@ -118,8 +118,9 @@ The complete Fareedkot Teeka is now available in Unicode format:
 - **[fareedkot_teeka_0.1.0.pdf](Finished%20Docs/fareedkot_teeka_0.1.0.pdf)** — PDF version for easier sharing
 
 ### Devanagari (Hindi Script)
-- **[fareedkot_teeka_devanagari_0_1_0.docx](Finished%20Docs/fareedkot_teeka_devanagari_0_1_0.docx)** — Complete transliteration to Devanagari Unicode
+- **[fareedkot_teeka_devanagari_0_1_0.docx](Finished%20Docs/fareedkot_teeka_devanagari_0_1_0.docx)** — Complete transliteration to Devanagari Unicode (v0.1.0)
 - **[fareedkot_teeka_devanagari_0.1.0.pdf](Finished%20Docs/fareedkot_teeka_devanagari_0.1.0.pdf)** — PDF version for wider compatibility
+- `fareedkot_teeka_devanagari_0_2_0.docx` *(in progress)* — v0.2.0 with Devanagari spelling corrections via `braj_correction_agent/`
 
 All documents are annotated with version metadata and include proper formatting with page references to the original GGS.
 
@@ -232,7 +233,7 @@ python3 gurbani_accuracy_test/test_gurbani_accuracy.py "Finished Docs/fareedkot_
 
 Results are saved as JSON + markdown report in `gurbani_accuracy_test/data/`. See [`docs/gurbani_accuracy_report.md`](docs/gurbani_accuracy_report.md) for the latest report.
 
-**Current accuracy: 98.9%** across 60,726 tuks tested (v0.1.2).
+**Current accuracy: 98.9%** across 60,726 tuks tested (v0.1.2). Target for v0.2.0: spelling corrections via `braj_correction_agent/`.
 
 ### Run tests
 

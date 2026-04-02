@@ -4,3 +4,5 @@ __pycache__/
 .DS_Store
 output/
 gurbani_accuracy_test/data/
+.env
+braj_correction_agent/.env
